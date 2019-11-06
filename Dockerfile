@@ -1,9 +1,9 @@
-FROM ubuntu:16.04
+FROM frolvlad/alpine-python3
 MAINTAINER Jeffrey Lim "jeffrey@cloa.io"
-RUN apt-get update -y
-RUN apt-get install -y python-pip python-dev build-essential git
-RUN git clone https://github.com/cloatech/status-worker_main.git
+RUN apk add --no-cache git
+RUN git clone https://github.com/jsrimr/flask-signal-worker.git
 COPY . /worker_main
 WORKDIR /worker_main
-RUN pip install -r requirements.txt
-CMD ["worker_main.py"]
+RUN pip3 install -r /worker_main/requirements.txt
+ENTRYPOINT ["python3"]
+CMD ["app.py"]

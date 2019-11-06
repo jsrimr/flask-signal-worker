@@ -1,2 +1,17 @@
+aniso8601==8.0.0
 certifi==2019.9.11
+Click==7.0
+Flask==1.1.1
+Flask-MySQL==1.4.0
+Flask-RESTful==0.3.7
+hydra-core==0.9.0
+itsdangerous==1.1.0
+Jinja2==2.10.3
+MarkupSafe==1.1.1
+omegaconf==1.3.0
 PyMySQL==0.9.3
+pytz==2019.3
+PyYAML==5.1.2
+six==1.12.0
+SQLAlchemy==1.3.8
+Werkzeug==0.16.0
