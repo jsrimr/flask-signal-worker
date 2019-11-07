@@ -1,3 +1,5 @@
+import sys
+import signal
 import socket
 import threading
 import pymysql
@@ -45,26 +47,31 @@ def get_status(sock):
     return result
 
 
-def worker_main(query_time, host="cw.cloa.io", port=4242, db="maria", ):
-    # todo : sock , conn 을 인자로 받아서 반복적으로 생성할 필요 없도록
-    # 죽으라는 시그널 받으면 sock , conn .close 하고 좀 이따 종료
-    with socket.socket() as sock:
-        sock.connect((host, port))
-        result = get_status(sock)
+def on_stop_handler(signum, frame):
+    print('Exiting application...')
+    sock.close()
+    conn.close()
+    sys.exit(0)
 
-        if db == "maria":
-            conn = pymysql.connect(host=host,
-                                   user="admin",
-                                   password="cloa2514",
-                                   db="cloaweb",
-                                   )
-            record_db_maria(conn, result)
+def listen_stop_signal():
+    signal.signal(signal.SIGINT, on_stop_handler) #sigint : ctrl + c
+    signal.signal(signal.SIGTERM, on_stop_handler) #sigterm : termination signal
+
+def main():
+    listen_stop_signal()
+    result = get_status(sock)
+    record_db_maria(conn, result)
 
     print("hello worker is working")
-    print(f"query time : {query_time}")
-    threading.Timer(query_time, worker_main, {query_time: query_time}).start()
-
+    print(f"query time : {args.query_time}")
+    threading.Timer(args.query_time, main).start()
 
 if __name__ == "__main__":
     args = argparser()
-    worker_main(query_time=args.query_time)
+    sock = socket.socket()
+    conn = pymysql.connect(host=args.host,
+                           user="admin",
+                           password="cloa2514",
+                           db="cloaweb",
+                           )
+    main()
