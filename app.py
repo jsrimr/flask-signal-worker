@@ -4,6 +4,9 @@ import subprocess
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
 
+#todo 인증추가 , 방어
+#todo 예외상황 : 네트워크가 끊긴다거나
+
 logger = logging.getLogger("")  # todo : logger 기능 추가
 
 app = Flask(__name__)

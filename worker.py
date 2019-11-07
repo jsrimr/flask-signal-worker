@@ -46,6 +46,8 @@ def get_status(sock):
 
 
 def worker_main(query_time, host="cw.cloa.io", port=4242, db="maria", ):
+    # todo : sock , conn 을 인자로 받아서 반복적으로 생성할 필요 없도록
+    # 죽으라는 시그널 받으면 sock , conn .close 하고 좀 이따 종료
     with socket.socket() as sock:
         sock.connect((host, port))
         result = get_status(sock)
