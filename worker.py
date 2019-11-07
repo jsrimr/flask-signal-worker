@@ -58,7 +58,7 @@ def listen_stop_signal():
     signal.signal(signal.SIGTERM, on_stop_handler) #sigterm : termination signal
 
 def main():
-    listen_stop_signal()
+
     result = get_status(sock)
     record_db_maria(conn, result)
 
@@ -67,8 +67,10 @@ def main():
     threading.Timer(args.query_time, main).start()
 
 if __name__ == "__main__":
+    listen_stop_signal()
     args = argparser()
     sock = socket.socket()
+    sock.connect((args.host, args.port))
     conn = pymysql.connect(host=args.host,
                            user="admin",
                            password="cloa2514",
