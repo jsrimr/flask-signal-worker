@@ -29,6 +29,7 @@ def record_db_maria(conn, result, ):
     c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 5, {count_res[4]}, NOW() )")
     c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 6, {count_res[5]}, NOW() )")
     conn.commit()
+    print("wrote status to db")
 
 
 def get_status(sock):
