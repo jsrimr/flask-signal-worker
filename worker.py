@@ -5,35 +5,43 @@ import threading
 import pymysql
 from arguments import argparser
 
-COMMANDS = ["PUB", "SUBN", "SUB", "UNSUB", "GET", "SET"]
+cmd_list = ["PUBLISH",
+"message",
+"SUBSCRIBE",
+"UNSUBSCRIBE",
+"SET",
+"GET",
+"RPUSH",
+"LPOP",
+"PING",
+"STATUS"]
 
-
-def count(result):
-    count = [0 for _ in range(len(COMMANDS))]
-    for i, res in enumerate(result[:-1]):
-        ok, id_person, count_res = res.split()
-        count[i] = int(count_res)
-    return count
+cmd = ""
+for cmd_ in cmd_list:
+    tmp = "status "+cmd_+"\r\n"
+    cmd += tmp
 
 
 def record_db_maria(conn, result, ):
     c = conn.cursor()
 
-    result = result.split('\r\n')[:-1]
+    count_res = result.replace("\r\n", "").split(':')[1:]
 
-    count_res = count(result)
     c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 1, {count_res[0]}, NOW() )")
     c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 2, {count_res[1]}, NOW() )")
     c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 3, {count_res[2]}, NOW() )")
     c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 4, {count_res[3]}, NOW() )")
     c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 5, {count_res[4]}, NOW() )")
     c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 6, {count_res[5]}, NOW() )")
+    c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 6, {count_res[6]}, NOW() )")
+    c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 6, {count_res[7]}, NOW() )")
+    c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 6, {count_res[8]}, NOW() )")
+    c.execute(f"INSERT INTO status_statuslog( cmd_id, value, created ) VALUES ( 6, {count_res[9]}, NOW() )")
     conn.commit()
     print("wrote status to db")
 
 
-def get_status(sock):
-    cmd = "STATUS 1 PUB\r\nSTATUS 2 SUBN\r\nSTATUS 3 SUB\r\nSTATUS 4 UNSUB\r\nSTATUS 5 GET\r\nSTATUS 6 SET\r\n"
+def get_status(cmd, sock):
     sock.sendall(cmd.encode())
 
     result = ""
@@ -42,7 +50,7 @@ def get_status(sock):
         res = sock.recv(1024)
         result += res.decode()
 
-        if result.count('\r\n') == len(COMMANDS):
+        if result.count('\r\n') == len(cmd_list):
             continue_recv = False
 
     return result
@@ -60,7 +68,7 @@ def listen_stop_signal():
 
 def main():
 
-    result = get_status(sock)
+    result = get_status(cmd, sock)
     record_db_maria(conn, result)
 
     print("hello worker is working")
