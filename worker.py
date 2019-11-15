@@ -79,8 +79,8 @@ if __name__ == "__main__":
     listen_stop_signal()
     args = argparser()
     sock = socket.socket()
-    sock.connect((args.host, args.port))
-    conn = pymysql.connect(host=args.host,
+    sock.connect((args.broker, args.broker_port))
+    conn = pymysql.connect(host=args.db_host,
                            user="admin",
                            password="cloa2514",
                            db="cloaweb",
